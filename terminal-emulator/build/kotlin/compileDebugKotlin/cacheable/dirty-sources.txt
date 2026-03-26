@@ -1,0 +1,14 @@
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalRow.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/KeyHandler.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/JNI.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/WcWidth.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalSession.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalColorScheme.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalEmulator.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalOutput.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalSessionClient.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TextStyle.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/ByteQueue.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/Logger.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalColors.kt
+/home/draker/termux-app/terminal-emulator/src/main/java/com/termux/terminal/TerminalBuffer.kt
