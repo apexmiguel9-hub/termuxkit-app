@@ -24,8 +24,6 @@ jobs:
       - name: Set up Android SDK and NDK
         uses: android-actions/setup-android@v2
         with:
-          api-level: 33
-          ndk-version: r29c
           cache: true
 
       # Cache Gradle packages
@@ -53,8 +51,8 @@ jobs:
       # Build native C libraries with ndk-build
       - name: Build native C libraries (libtermux.so & libtermux-exec.so)
         run: |
-          export ANDROID_NDK_HOME=$ANDROID_NDK_ROOT
-          ndk-build -C app/src/main/jni NDK_PROJECT_PATH=app/src/main/jni APP_BUILD_SCRIPT=Android.mk
+          echo "$ANDROID_NDK_ROOT" >> $GITHUB_PATH
+          $ANDROID_NDK_ROOT/ndk-build -C app/src/main/jni NDK_PROJECT_PATH=app/src/main/jni APP_BUILD_SCRIPT=app/src/main/jni/Android.mk
         shell: bash
 
       # Build Rust engine library
@@ -83,4 +81,3 @@ jobs:
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 7
-
