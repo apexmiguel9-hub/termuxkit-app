@@ -1,0 +1,5 @@
+[target.aarch64-linux-android]
+linker = "/home/draker/android-ndk-r29/toolchains/llvm/prebuilt/linux-aarch64/bin/aarch64-linux-android29-clang"
+
+[target.x86_64-linux-android]
+linker = "/home/draker/android-ndk-r29/toolchains/llvm/prebuilt/linux-aarch64/bin/x86_64-linux-android29-clang"

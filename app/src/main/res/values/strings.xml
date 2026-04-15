@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Alpa TermuxKit</string>
+    <string name="terminal_title">Terminal</string>
+    <string name="settings_title">Configuración</string>
+    <string name="new_session">Nueva Sesión</string>
+    <string name="close_session">Cerrar Sesión</string>
+    <string name="copy">Copiar</string>
+    <string name="paste">Pegar</string>
+    <string name="more">Más</string>
+</resources>
