@@ -7,7 +7,7 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose'
 }
 
-android {
+  android {
     namespace 'com.termux.alpa_termuxkit'
     compileSdkVersion 34
 
@@ -78,10 +78,15 @@ android {
         kotlinCompilerExtensionVersion '1.5.4'
     }
 
+    // Empaquetado de recursos y librerías nativas
     packaging {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+    }
+    // Garantizar que los .so se incluyan sin conflicto
+    packagingOptions {
+        pickFirst "**/*.so"
     }
 }
 

@@ -13,12 +13,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Java SDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
+      # Android SDK & NDK (r29c)
+      - name: Set up Android SDK and NDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          ndk-version: r29c
+          cache: true
+
+      # Cache Gradle packages
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
@@ -27,15 +37,45 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # Install Rust toolchain and Android target
+      - name: Install Rust toolchain
+        run: |
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source $HOME/.cargo/env
+          rustup target add aarch64-linux-android
+          cargo install cargo-ndk --locked
+        shell: bash
+
+      # Ensure gradlew is executable
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
+      # Build native C libraries with ndk-build
+      - name: Build native C libraries (libtermux.so & libtermux-exec.so)
+        run: |
+          export ANDROID_NDK_HOME=$ANDROID_NDK_ROOT
+          ndk-build -C app/src/main/jni NDK_PROJECT_PATH=app/src/main/jni APP_BUILD_SCRIPT=Android.mk
+        shell: bash
+
+      # Build Rust engine library
+      - name: Build Rust engine (libtermux_rust_engine.so)
+        run: |
+          source $HOME/.cargo/env
+          cd rust_engine
+          cargo ndk --target aarch64-linux-android --release build
+          mkdir -p ../../app/src/main/jniLibs/arm64-v8a
+          cp target/aarch64-linux-android/release/libtermux_rust_engine.so ../../app/src/main/jniLibs/arm64-v8a/
+        shell: bash
+
+      # Assemble the APK
       - name: Build with Gradle
         run: ./gradlew assembleDebug
 
+      # Run unit tests
       - name: Run tests
         run: ./gradlew test
 
+      # Upload the generated APK as an artifact
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
