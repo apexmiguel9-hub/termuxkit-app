@@ -361,6 +361,7 @@ class TerminalManager {
                     "TERM=xterm-256color",
                     "LANG=en_US.UTF-8",
                     "PS1=termuxkit:\\w\\$ ",
+                    "LD_PRELOAD=$ldPreloadPath",
                     "TERMUX_NATIVE_LIB_DIR=${nativeLibDir ?: ""}"
                 )
 
