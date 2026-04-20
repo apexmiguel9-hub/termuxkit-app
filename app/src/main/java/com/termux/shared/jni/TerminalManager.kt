@@ -206,7 +206,7 @@ class TerminalManager {
             Log.e("BOOTSTRAP", "nativeLibraryDir=$nativeLibDir")
 
             // Fix 1: Crear directorio HOME si no existe
-            val homeDir = File("/data/user/0/com.termux.alpa_termuxkit/files/home")
+            val homeDir = File("/data/data/com.termux.alpa_termuxkit/files/home")
             if (!homeDir.exists()) {
                 homeDir.mkdirs()
                 Log.i(TAG, "🏠 Directorio HOME creado: ${homeDir.absolutePath}")
@@ -224,7 +224,7 @@ class TerminalManager {
                 |export PATH=/data/user/0/com.termux.alpa_termuxkit/files/usr/bin:/system/bin:/system/xbin:/bin
                 |export LD_LIBRARY_PATH=/data/user/0/com.termux.alpa_termuxkit/files/usr/lib
                 |export PREFIX=/data/user/0/com.termux.alpa_termuxkit/files/usr
-                |export HOME=/data/user/0/com.termux.alpa_termuxkit/files/home
+                |export HOME=/data/data/com.termux.alpa_termuxkit/files/home
                 |export TMPDIR=/data/user/0/com.termux.alpa_termuxkit/files/usr/tmp
                 |export TERM=xterm-256color
                 |export LANG=en_US.UTF-8
@@ -334,7 +334,7 @@ class TerminalManager {
                 Log.e("TERMINAL_DEBUG", "startSession: llamando a JNI.createSubprocess (C nativo)...")
 
                 // Asegurar que el cwd existe antes de llamar al C
-                val cwd = File("/data/user/0/com.termux.alpa_termuxkit/files/home")
+                val cwd = File("/data/data/com.termux.alpa_termuxkit/files/home")
                 if (!cwd.exists()) {
                     cwd.mkdirs()
                     Log.e("TERMINAL_DEBUG", "startSession: CWD creado")
@@ -342,7 +342,7 @@ class TerminalManager {
 
                 val processId = intArrayOf(0)
                 // Forzar carga de ~/.bashrc con --rcfile (contiene funciones SELinux workaround)
-                val shellArgs = arrayOf("--rcfile", "/data/user/0/com.termux.alpa_termuxkit/files/home/.bashrc", "-i")
+                val shellArgs = arrayOf("--rcfile", "/data/data/com.termux.alpa_termuxkit/files/home/.bashrc", "-i")
 
                 // Construir path de LD_PRELOAD para termux-exec
                 val ldPreloadPath = if (nativeLibDir != null) {
@@ -355,7 +355,7 @@ class TerminalManager {
                     "PATH=/data/user/0/com.termux.alpa_termuxkit/files/usr/bin:/system/bin:/bin",
                     "LD_LIBRARY_PATH=/data/user/0/com.termux.alpa_termuxkit/files/usr/lib:/system/lib64:/system/lib",
                     "PREFIX=/data/user/0/com.termux.alpa_termuxkit/files/usr",
-                    "HOME=/data/user/0/com.termux.alpa_termuxkit/files/home",
+                    "HOME=/data/data/com.termux.alpa_termuxkit/files/home",
                     "TMPDIR=/data/user/0/com.termux.alpa_termuxkit/files/usr/tmp",
                     "ENV=/data/user/0/com.termux.alpa_termuxkit/files/usr/etc/profile",
                     "TERM=xterm-256color",
@@ -371,7 +371,7 @@ class TerminalManager {
                 try {
                     masterFd = JNI.createSubprocess(
                         cmd = actualShell,
-                        cwd = "/data/user/0/com.termux.alpa_termuxkit/files/home",
+                        cwd = "/data/data/com.termux.alpa_termuxkit/files/home",
                         args = shellArgs,
                         envVars = envVars,
                         processId = processId,
