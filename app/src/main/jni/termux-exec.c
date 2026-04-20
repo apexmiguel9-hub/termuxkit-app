@@ -29,7 +29,7 @@
 
 /* Termux paths */
 #define TERMUX_PREFIX_DATA "/data/data/com.termux.alpa_termuxkit/files/usr"
-#define TERMUX_PREFIX_USER0 "/data/user/0/com.termux.alpa_termuxkit/files/usr"
+#define TERMUX_PREFIX_USER0 "/data/data/com.termux.alpa_termuxkit/files/usr"
 #define SYSTEM_SH "/system/bin/sh"
 
 /* Original execve */
@@ -124,7 +124,7 @@ static char **build_enhanced_envp(char *const envp[], int *out_count) {
     /* Inject LD_LIBRARY_PATH */
     snprintf(ld_lib_path_buf, sizeof(ld_lib_path_buf),
              "LD_LIBRARY_PATH=/data/data/com.termux.alpa_termuxkit/files/usr/lib:"
-             "/data/user/0/com.termux.alpa_termuxkit/files/usr/lib");
+             "/data/data/com.termux.alpa_termuxkit/files/usr/lib");
     new_envp[env_count + extra++] = ld_lib_path_buf;
 
     new_envp[env_count + extra] = NULL;

@@ -126,11 +126,11 @@ static int create_subprocess(JNIEnv* env,
         if (envp) for (; *envp; ++envp) putenv(*envp);
 
         // Force set environment variables
-        setenv("PREFIX", "/data/user/0/com.termux.alpa_termuxkit/files/usr", 1);
-        setenv("HOME", "/data/user/0/com.termux.alpa_termuxkit/files/home", 1);
-        setenv("PATH", "/data/user/0/com.termux.alpa_termuxkit/files/usr/bin:/system/bin", 1);
-        setenv("LD_LIBRARY_PATH", "/data/user/0/com.termux.alpa_termuxkit/files/usr/lib", 1);
-        setenv("TMPDIR", "/data/user/0/com.termux.alpa_termuxkit/files/usr/tmp", 1);
+        setenv("PREFIX", "/data/data/com.termux.alpa_termuxkit/files/usr", 1);
+        setenv("HOME", "/data/data/com.termux.alpa_termuxkit/files/home", 1);
+        setenv("PATH", "/data/data/com.termux.alpa_termuxkit/files/usr/bin:/system/bin", 1);
+        setenv("LD_LIBRARY_PATH", "/data/data/com.termux.alpa_termuxkit/files/usr/lib", 1);
+        setenv("TMPDIR", "/data/data/com.termux.alpa_termuxkit/files/usr/tmp", 1);
         setenv("TERM", "xterm-256color", 1);
         setenv("LANG", "en_US.UTF-8", 1);
 
