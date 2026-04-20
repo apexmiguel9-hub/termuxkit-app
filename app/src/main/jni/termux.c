@@ -82,6 +82,7 @@ static int create_subprocess(JNIEnv* env,
 
         close(ptm);
         setsid();
+        chdir("/data/data/com.termux.alpa_termuxkit/files/home");
 
         int pts = open(devname, O_RDWR);
         if (pts < 0) exit(-1);
