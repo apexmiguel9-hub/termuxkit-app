@@ -44,26 +44,26 @@ jobs:
           cargo install cargo-ndk --locked
         shell: bash
 
-      # Ensure gradlew is executable
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      # Build native C libraries with ndk-build
-      - name: Build native C libraries (libtermux.so & libtermux-exec.so)
+      - name: Build C native libraries
         run: |
           echo "$ANDROID_NDK_ROOT" >> $GITHUB_PATH
-          $ANDROID_NDK_ROOT/ndk-build -C app/src/main/jni NDK_PROJECT_PATH=app/src/main/jni APP_BUILD_SCRIPT=app/src/main/jni/Android.mk
-        shell: bash
+          $ANDROID_NDK_ROOT/ndk-build \
+            -C app/src/main/jni \
+            APP_BUILD_SCRIPT=Android.mk \
+            NDK_PROJECT_PATH=. \
+            APP_PLATFORM=android-29
 
-      # Build Rust engine library
-      - name: Build Rust engine (libtermux_rust_engine.so)
+      - name: Build Rust engine library
         run: |
+          echo "$ANDROID_NDK_ROOT" >> $GITHUB_PATH
           source $HOME/.cargo/env
           cd rust_engine
-          cargo ndk --target aarch64-linux-android --release build
-          mkdir -p ../../app/src/main/jniLibs/arm64-v8a
-          cp target/aarch64-linux-android/release/libtermux_rust_engine.so ../../app/src/main/jniLibs/arm64-v8a/
-        shell: bash
+          cargo ndk --target aarch64-linux-android --platform 29 build --release
+          mkdir -p ../app/src/main/jniLibs/arm64-v8a
+          cp target/aarch64-linux-android/release/libtermux_rust_engine.so ../app/src/main/jniLibs/arm64-v8a/
 
       # Assemble the APK
       - name: Build with Gradle
