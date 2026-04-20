@@ -165,33 +165,54 @@ int execve(const char *filename, char *const argv[], char *const envp[]) {
 
     /* Check if it's a script file */
     if (is_script_file(filename)) {
-        /*
-         * SELinux blocks execute_no_trans for scripts in app_data_file.
-         * Redirect to /system/bin/sh which has proper SELinux context.
-         *
-         * Build new argv: ["/system/bin/sh", script_path, orig_argv[2]..., NULL]
-         */
-        LOGD("Script detected, redirecting to %s", SYSTEM_SH);
+        /* Read full shebang line to get interpreter path */
+        char interp[512] = {0};
+        FILE *sf = fopen(filename, "r");
+        if (sf) {
+            char line[512] = {0};
+            if (fgets(line, sizeof(line), sf) && line[0] == '#' && line[1] == '!') {
+                char *start = line + 2;
+                while (*start == ' ') start++;
+                char *end = start;
+                while (*end && *end != ' ' && *end != '\n' && *end != '\r') end++;
+                *end = '\0';
+                strncpy(interp, start, sizeof(interp) - 1);
+            }
+            fclose(sf);
+        }
 
         int argc = 0;
         while (argv && argv[argc]) argc++;
 
-        char **new_argv = (char **)malloc((argc + 1) * sizeof(char *));
-        if (!new_argv) {
-            LOGE("malloc failed for script redirect");
-            errno = ENOMEM;
-            return -1;
+        /* If shebang interpreter is a Termux binary, use linker64 */
+        size_t data_len = strlen(TERMUX_PREFIX_DATA);
+        if (interp[0] != '\0' && strncmp(interp, TERMUX_PREFIX_DATA, data_len) == 0) {
+            LOGD("Script with Termux interp, using linker64: %s -> %s", filename, interp);
+            char **new_argv = (char **)malloc((argc + 3) * sizeof(char *));
+            if (!new_argv) { errno = ENOMEM; return -1; }
+            new_argv[0] = "/system/bin/linker64";
+            new_argv[1] = interp;
+            new_argv[2] = (char *)filename;
+            for (int i = 1; i < argc; i++) new_argv[i + 2] = argv[i];
+            new_argv[argc + 2] = NULL;
+            char **new_envp = build_enhanced_envp(envp, NULL);
+            int ret = real_execve("/system/bin/linker64", new_argv, new_envp ? new_envp : (char *const *)envp);
+            if (new_envp) free(new_envp);
+            free(new_argv);
+            return ret;
         }
 
-        new_argv[0] = SYSTEM_SH;
+        /* System interpreter — use directly */
+        const char *sh = (interp[0] != '\0') ? interp : SYSTEM_SH;
+        LOGD("Script with system interp: %s -> %s", filename, sh);
+        char **new_argv = (char **)malloc((argc + 2) * sizeof(char *));
+        if (!new_argv) { errno = ENOMEM; return -1; }
+        new_argv[0] = (char *)sh;
         new_argv[1] = (char *)filename;
-        for (int i = 2; i < argc; i++) {
-            new_argv[i] = argv[i];
-        }
-        new_argv[argc] = NULL;
-
-        int ret = real_execve(SYSTEM_SH, new_argv, envp);
-        LOGE("execve(%s) for script failed: %s", SYSTEM_SH, strerror(errno));
+        for (int i = 1; i < argc; i++) new_argv[i + 1] = argv[i];
+        new_argv[argc + 1] = NULL;
+        int ret = real_execve(sh, new_argv, envp);
+        LOGE("execve(%s) for script failed: %s", sh, strerror(errno));
         free(new_argv);
         return ret;
     }
